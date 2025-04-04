@@ -1,0 +1,70 @@
+/* 전체 앱 스타일 */
+.app-container {
+  font-family: "Arial", sans-serif;
+  text-align: center;
+  padding: 20px;
+}
+
+/* 네비게이션 바 */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #007bff;
+  padding: 15px 30px;
+  border-radius: 10px;
+}
+
+.logo {
+  color: white;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  margin: 0 15px;
+  font-size: 1.2rem;
+}
+
+.nav-links a:hover {
+  text-decoration: underline;
+}
+
+/* 홈 페이지 스타일 */
+.home-container {
+  margin-top: 50px;
+}
+
+.search-link {
+  display: inline-block;
+  padding: 10px 20px;
+  background: #28a745;
+  color: white;
+  font-size: 1.2rem;
+  border-radius: 5px;
+  text-decoration: none;
+}
+
+.search-link:hover {
+  background: #218838;
+}
+
+
+.logo a {
+  color: black;
+  text-decoration: none;
+}
+
+.logo-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.logo-image {
+  height: 70px;
+  width: 70px;
+  margin-right: 10px;
+}

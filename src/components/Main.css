@@ -1,0 +1,50 @@
+.main-container {
+    text-align: center;
+    padding: 20px;
+  }
+  
+  .title {
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
+  .buttons {
+    display: flex;
+    justify-content: space-around;
+    margin: 20px 0;
+  }
+  
+  .main-btn {
+    background: #f1f1f1;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  
+  .menu-list {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+  }
+  
+  .menu-item {
+    text-align: center;
+    cursor: pointer;
+  }
+  
+  .menu-item img {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .car-list {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+  }
+  
+  .car-list img {
+    width: 100px;
+    border-radius: 8px;
+  }
+  
