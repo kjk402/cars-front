@@ -5,6 +5,7 @@ import "./SellPage.css";
 function SellPage() {
   const [brands, setBrands] = useState([]);
   const [models, setModels] = useState([]);
+  const [engineSizes, setEngineSizes] = useState([]);
   const [formData, setFormData] = useState({
     brand: "",
     model: "",
@@ -24,8 +25,8 @@ function SellPage() {
   }, []);
 
   const handleBrandSelect = async (brand) => {
-    setFormData({ ...formData, brand, model: "" });
-
+    setFormData({ ...formData, brand, model: "", fuelType: "", engineSize: "" });
+    setEngineSizes([]);
     try {
       const res = await axios.get("http://localhost:8000/cars/brand-models/", {
         params: { brand },
@@ -33,6 +34,28 @@ function SellPage() {
       setModels(res.data.models);
     } catch (error) {
       console.error("모델 목록 오류:", error);
+    }
+  };
+
+  const handleModelChange = (model) => {
+    setFormData({ ...formData, model, fuelType: "", engineSize: "" });
+    setEngineSizes([]);
+  };
+
+  const handleFuelTypeChange = async (fuelType) => {
+    const { brand, model } = formData;
+    setFormData({ ...formData, fuelType, engineSize: "" });
+
+    if (brand && model && fuelType) {
+      try {
+        const res = await axios.get("http://localhost:8000/cars/engine-sizes/", {
+          params: { brand, model, fuelType }
+        });
+        let sizes = res.data.engine_sizes.filter(s => s !== 0);
+        setEngineSizes(sizes);
+      } catch (err) {
+        console.error("엔진 사이즈 불러오기 실패:", err);
+      }
     }
   };
 
@@ -62,59 +85,62 @@ function SellPage() {
 
       <div className="sell-field">
         <label>모델 선택</label>
-        <select onChange={(e) => setFormData({ ...formData, model: e.target.value })} value={formData.model}>
+        <select onChange={(e) => handleModelChange(e.target.value)} value={formData.model}>
           <option value="">모델 선택</option>
           {models.map((m, i) => (
-            <option key={i} value={` ${m.model}`}>{m.model}</option> 
+            <option key={i} value={` ${m.model}`}>{m.model}</option>
           ))}
         </select>
       </div>
 
       <div className="sell-field">
-  <label>엔진사이즈: {formData.engineSize * 1000}cc</label>
-  <input
-    type="range"
-    min={0.6}
-    max={7.0}
-    step={0.1}
-    value={formData.engineSize}
-    onChange={(e) => setFormData({ ...formData, engineSize: parseFloat(e.target.value) })}
-  />
-</div>
+        <label>연료 타입 선택</label>
+        <select onChange={(e) => handleFuelTypeChange(e.target.value)} value={formData.fuelType}>
+          <option value="">연료 타입</option>
+          <option value="Petrol">Petrol</option>
+          <option value="Diesel">Diesel</option>
+          <option value="Hybrid">Hybrid</option>
+          <option value="Electric">Electric</option>
+        </select>
+      </div>
+
+      {engineSizes.length > 0 && (
+        <div className="sell-field">
+          <label>엔진 사이즈 선택</label>
+          <select
+            value={formData.engineSize}
+            onChange={(e) => setFormData({ ...formData, engineSize: parseFloat(e.target.value) })}
+          >
+            <option value="">엔진 사이즈</option>
+            {engineSizes.map((size, i) => (
+              <option key={i} value={size}>{(size * 1000).toFixed(0)}cc</option>
+            ))}
+          </select>
+        </div>
+      )}
 
       <div className="sell-field">
         <label>연식: {formData.year}년</label>
         <input
-            type="range"
-            min="1990"
-            max={new Date().getFullYear()}
-            step="1"
-            value={formData.year}
-            onChange={(e) => setFormData({ ...formData, year: parseInt(e.target.value) })}
+          type="range"
+          min="1990"
+          max={new Date().getFullYear()}
+          step="1"
+          value={formData.year}
+          onChange={(e) => setFormData({ ...formData, year: parseInt(e.target.value) })}
         />
       </div>
 
       <div className="sell-field">
         <label>주행거리 (mile): {formData.mileage.toLocaleString()} ml</label>
         <input
-            type="range"
-            min="0"
-            max="200000"
-            step="100"
-            value={formData.mileage}
-            onChange={(e) => setFormData({ ...formData, mileage: parseInt(e.target.value) })}
+          type="range"
+          min="0"
+          max="200000"
+          step="100"
+          value={formData.mileage}
+          onChange={(e) => setFormData({ ...formData, mileage: parseInt(e.target.value) })}
         />
-       </div>
-
-      <div className="sell-field">
-        <label>연료 타입</label>
-        <select onChange={(e) => setFormData({ ...formData, fuelType: e.target.value })} value={formData.fuelType}>
-          <option value="">연료 선택</option>
-          <option value="Petrol">Petrol</option>
-          <option value="Diesel">Diesel</option>
-          <option value="Hybrid">Hybrid</option>
-          <option value="Electric">Electric</option>
-        </select>
       </div>
 
       <button
@@ -123,10 +149,10 @@ function SellPage() {
         disabled={
           !formData.brand ||
           !formData.model ||
+          !formData.fuelType ||
           !formData.engineSize ||
           !formData.year ||
-          !formData.mileage ||
-          !formData.fuelType
+          !formData.mileage
         }
       >
         예상 가격 확인
