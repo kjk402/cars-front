@@ -17,6 +17,7 @@ function SellPage() {
 
   const [imageBase64, setImageBase64] = useState("");
   const [predictedPrice, setPredictedPrice] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     axios.get("http://localhost:8000/cars/top-brands/")
@@ -60,12 +61,15 @@ function SellPage() {
   };
 
   const handleSubmit = async () => {
+    setIsLoading(true);  // 로딩 시작
     try {
       const res = await axios.post("http://localhost:8000/train/predict/", formData);
       setPredictedPrice(res.data.predicted_price);
       setImageBase64(res.data.image_base64);
     } catch (err) {
       console.error("예측 요청 오류:", err);
+    } finally {
+      setIsLoading(false);  // 로딩 끝
     }
   };
 
@@ -147,6 +151,7 @@ function SellPage() {
         className="predict-button"
         onClick={handleSubmit}
         disabled={
+          isLoading ||
           !formData.brand ||
           !formData.model ||
           !formData.fuelType ||
@@ -155,7 +160,14 @@ function SellPage() {
           !formData.mileage
         }
       >
-        예상 가격 확인
+        {isLoading ? (
+          <div className="spinner-container">
+            <div className="spinner"></div>
+            <span style={{ marginLeft: "10px" }}>예측 중...</span>
+          </div>
+        ) : (
+          "예상 가격 확인"
+        )}
       </button>
 
       {predictedPrice && (
