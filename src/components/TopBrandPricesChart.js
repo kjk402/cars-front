@@ -14,6 +14,10 @@ import "./TopBrandPricesChart.css";
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 function TopBrandPricesChart({ onClose }) {
+  const api = axios.create({
+    baseURL: process.env.REACT_APP_API_BASE_URL,
+  });
+  
   const [chartData, setChartData] = useState(null);
 
   useEffect(() => {
