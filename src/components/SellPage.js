@@ -19,6 +19,23 @@ function SellPage() {
   const [predictedPrice, setPredictedPrice] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [brandDropdownOpen, setBrandDropdownOpen] = useState(false);
+
+  const [serverStatus, setServerStatus] = useState(null); // null | "ok" | "fail"
+
+  useEffect(() => {
+    axios.get("http://localhost:8000/train/health/")
+      .then((res) => {
+        if (res.data.status === "ok") {
+          setServerStatus("ok");
+        } else {
+          setServerStatus("fail");
+        }
+      })
+      .catch(() => {
+        setServerStatus("fail");
+      });
+  }, []);
+
   useEffect(() => {
     axios.get("http://localhost:8000/cars/top-brands/")
       .then(res => setBrands(res.data.top_brands))
@@ -77,6 +94,18 @@ function SellPage() {
 
   return (
     <div className="sell-container">
+      <div className="server-status-bar">
+        예측 서버 상태:{" "}
+        <span className="status-text">
+          {serverStatus === "ok" ? "연결됨" : serverStatus === "fail" ? "연결 실패" : "확인 중..."}
+        </span>
+        <span
+          className={`status-indicator ${
+            serverStatus === "ok" ? "green" : serverStatus === "fail" ? "red" : "gray"
+          }`}
+        />
+      </div>
+
       <h1>내 차량 가격 예측</h1>
 
       <div className="sell-field">
