@@ -18,16 +18,18 @@ function SellPage() {
   const [imageBase64, setImageBase64] = useState("");
   const [predictedPrice, setPredictedPrice] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
+  const [brandDropdownOpen, setBrandDropdownOpen] = useState(false);
   useEffect(() => {
     axios.get("http://localhost:8000/cars/top-brands/")
       .then(res => setBrands(res.data.top_brands))
       .catch(err => console.error("브랜드 가져오기 오류:", err));
   }, []);
 
-  const handleBrandSelect = async (brand) => {
+  const handleBrandChange = async (brand) => {
     setFormData({ ...formData, brand, model: "", fuelType: "", engineSize: "" });
+    setBrandDropdownOpen(false);
     setEngineSizes([]);
+  
     try {
       const res = await axios.get("http://localhost:8000/cars/brand-models/", {
         params: { brand },
@@ -79,12 +81,47 @@ function SellPage() {
 
       <div className="sell-field">
         <label>브랜드 선택</label>
-        <select onChange={(e) => handleBrandSelect(e.target.value)} value={formData.brand}>
-          <option value="">브랜드 선택</option>
-          {brands.map((b, i) => (
-            <option key={i} value={b.brand}>{b.brand.toUpperCase()}</option>
-          ))}
-        </select>
+        <div
+          className="dropdown-header"
+          onClick={() => setBrandDropdownOpen(!brandDropdownOpen)}
+        >
+          {formData.brand ? (
+            <>
+              {brands.find((b) => b.brand === formData.brand)?.logo && (
+                <img
+                  src={`data:image/png;base64,${brands.find((b) => b.brand === formData.brand)?.logo}`}
+                  alt={formData.brand}
+                  className="brand-logo"
+                />
+              )}
+              {formData.brand.toUpperCase()}
+            </>
+          ) : "브랜드 선택"}
+        </div>
+
+        {brandDropdownOpen && (
+          <div className="dropdown-options">
+            <div className="dropdown-option" onClick={() => handleBrandChange("")}>
+              브랜드 선택
+            </div>
+            {brands.map((brand, index) => (
+              <div
+                key={index}
+                className="dropdown-option"
+                onClick={() => handleBrandChange(brand.brand)}
+              >
+                {brand.logo && (
+                  <img
+                    src={`data:image/png;base64,${brand.logo}`}
+                    alt={brand.brand}
+                    className="brand-logo"
+                  />
+                )}
+                {brand.brand.toUpperCase()}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="sell-field">

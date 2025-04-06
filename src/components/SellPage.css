@@ -11,6 +11,7 @@
     display: flex;
     flex-direction: column;
     margin-bottom: 15px;
+    position: relative; 
   }
   
   .sell-field label {
@@ -76,3 +77,41 @@
       transform: rotate(360deg);
     }
   }
+
+  .brand-logo {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    margin-right: 8px;
+  }
+  
+  .brand-logo {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+  .dropdown-header,
+  .dropdown-option {
+    display: flex;
+    align-items: center;
+  }
+  
+  .dropdown-options {
+    border: 1px solid #ccc;
+    background-color: #fff;
+    max-height: 200px;
+    overflow-y: auto;
+    position: absolute;
+    z-index: 10;
+    width: 100%;
+  }
+  
+  .dropdown-header {
+    padding: 8px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    cursor: pointer;
+  }
+  
