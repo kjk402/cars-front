@@ -17,13 +17,13 @@ function TopBrandPricesChart({ onClose }) {
   const api = axios.create({
     baseURL: process.env.REACT_APP_API_BASE_URL,
   });
-  
+
   const [chartData, setChartData] = useState(null);
 
   useEffect(() => {
     const fetchChartData = async () => {
       try {
-        const res = await axios.get("http://127.0.0.1:8000/cars/brand-avg-prices/");
+        const res = await api.get("/cars/brand-avg-prices/");
         const labels = res.data.brand_avg_prices.map((b) => b.brand.toUpperCase());
         const values = res.data.brand_avg_prices.map((b) => b.avg_price);
         setChartData({

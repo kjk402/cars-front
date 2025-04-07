@@ -26,7 +26,7 @@ function SellPage() {
   const [serverStatus, setServerStatus] = useState(null); // null | "ok" | "fail"
 
   useEffect(() => {
-    axios.get("/train/health/")
+    api.get("/train/health/")
       .then((res) => {
         if (res.data.status === "ok") {
           setServerStatus("ok");
@@ -40,7 +40,7 @@ function SellPage() {
   }, []);
 
   useEffect(() => {
-    axios.get("/cars/top-brands/")
+    api.get("/cars/top-brands/")
       .then(res => setBrands(res.data.top_brands))
       .catch(err => console.error("브랜드 가져오기 오류:", err));
   }, []);
@@ -51,7 +51,7 @@ function SellPage() {
     setEngineSizes([]);
   
     try {
-      const res = await axios.get("/cars/brand-models/", {
+      const res = await api.get("/cars/brand-models/", {
         params: { brand },
       });
       setModels(res.data.models);
@@ -71,7 +71,7 @@ function SellPage() {
 
     if (brand && model && fuelType) {
       try {
-        const res = await axios.get("/cars/engine-sizes/", {
+        const res = await api.get("/cars/engine-sizes/", {
           params: { brand, model, fuelType }
         });
         let sizes = res.data.engine_sizes.filter(s => s !== 0);
@@ -85,7 +85,7 @@ function SellPage() {
   const handleSubmit = async () => {
     setIsLoading(true);  // 로딩 시작
     try {
-      const res = await axios.post("/train/predict/", formData);
+      const res = await api.post("/train/predict/", formData);
       setPredictedPrice(res.data.predicted_price);
       setImageBase64(res.data.image_base64);
     } catch (err) {
@@ -221,6 +221,7 @@ function SellPage() {
         onClick={handleSubmit}
         disabled={
           isLoading ||
+          serverStatus !== "ok" ||
           !formData.brand ||
           !formData.model ||
           !formData.fuelType ||
