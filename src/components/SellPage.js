@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import sampleBMW from "../assets/sample_bmw.json";
+import sampleMERCEDES from "../assets/sample_,mercedes.json";
+import sampleHYUNDI from "../assets/sample_hyundi.json";
 import "./SellPage.css";
 
 function SellPage() {
   const api = axios.create({
     baseURL: process.env.REACT_APP_API_BASE_URL,
   });
+
   const [brands, setBrands] = useState([]);
   const [models, setModels] = useState([]);
   const [engineSizes, setEngineSizes] = useState([]);
@@ -22,21 +26,15 @@ function SellPage() {
   const [predictedPrice, setPredictedPrice] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [brandDropdownOpen, setBrandDropdownOpen] = useState(false);
-
-  const [serverStatus, setServerStatus] = useState(null); // null | "ok" | "fail"
+  const [serverStatus, setServerStatus] = useState(null);
 
   useEffect(() => {
     api.get("/train/health/")
       .then((res) => {
-        if (res.data.status === "ok") {
-          setServerStatus("ok");
-        } else {
-          setServerStatus("fail");
-        }
+        if (res.data.status === "ok") setServerStatus("ok");
+        else setServerStatus("fail");
       })
-      .catch(() => {
-        setServerStatus("fail");
-      });
+      .catch(() => setServerStatus("fail"));
   }, []);
 
   useEffect(() => {
@@ -49,7 +47,7 @@ function SellPage() {
     setFormData({ ...formData, brand, model: "", fuelType: "", engineSize: "" });
     setBrandDropdownOpen(false);
     setEngineSizes([]);
-  
+
     try {
       const res = await api.get("/cars/brand-models/", {
         params: { brand },
@@ -65,25 +63,32 @@ function SellPage() {
     setEngineSizes([]);
   };
 
-  const handleFuelTypeChange = async (fuelType) => {
+  const handleFuelTypeChange = async (fuelType, sampleEngineSize = null) => {
     const { brand, model } = formData;
-    setFormData({ ...formData, fuelType, engineSize: "" });
+    setFormData(prev => ({ ...prev, fuelType, engineSize: "" }));
 
     if (brand && model && fuelType) {
       try {
         const res = await api.get("/cars/engine-sizes/", {
-          params: { brand, model, fuelType }
+          params: { brand, model, fuelType },
         });
-        let sizes = res.data.engine_sizes.filter(s => s !== 0);
+        const sizes = res.data.engine_sizes.filter(s => s !== 0);
         setEngineSizes(sizes);
+
+        if (sampleEngineSize !== null && sizes.includes(sampleEngineSize)) {
+          setFormData(prev => ({ ...prev, engineSize: sampleEngineSize }));
+        }
+
+        return sizes;
       } catch (err) {
         console.error("엔진 사이즈 불러오기 실패:", err);
       }
     }
+    return [];
   };
 
   const handleSubmit = async () => {
-    setIsLoading(true);  // 로딩 시작
+    setIsLoading(true);
     try {
       const res = await api.post("/train/predict/", formData);
       setPredictedPrice(res.data.predicted_price);
@@ -91,10 +96,42 @@ function SellPage() {
     } catch (err) {
       console.error("예측 요청 오류:", err);
     } finally {
-      setIsLoading(false);  // 로딩 끝
+      setIsLoading(false);
     }
   };
 
+  const handleLoadSample = async (sample) => {
+    try {
+      const { formData: sampleData, predicted_price, image_base64 } = sample;
+      const { brand, model, fuelType, engineSize, year, mileage } = sampleData;
+  
+      await handleBrandChange(brand);
+  
+      setFormData((prev) => ({ ...prev, model }));
+  
+      const res = await api.get("/cars/engine-sizes/", {
+        params: { brand, model, fuelType },
+      });
+      const sizes = res.data.engine_sizes.filter((s) => s !== 0);
+      setEngineSizes(sizes);
+  
+      setFormData({
+        brand,
+        model,
+        fuelType,
+        engineSize: sizes.includes(engineSize) ? engineSize : "",
+        year,
+        mileage,
+      });
+  
+      setPredictedPrice(predicted_price);
+      setImageBase64(image_base64);
+    } catch (err) {
+      console.error("샘플 로드 실패:", err);
+    }
+  };
+  
+  
   return (
     <div className="sell-container">
       <div className="server-status-bar">
@@ -109,14 +146,24 @@ function SellPage() {
         />
       </div>
 
+      <div style={{ marginBottom: "10px", display: "flex", gap: "10px" }}>
+        <button className="sample-button" onClick={() => handleLoadSample(sampleBMW)}>
+          Sample (BMW 5 Series)
+        </button>
+        <button className="sample-button" onClick={() => handleLoadSample(sampleMERCEDES)}>
+          Sample (MERCEDES S Class)
+        </button>
+        <button className="sample-button" onClick={() => handleLoadSample(sampleHYUNDI)}>
+          Sample (Hyundi Ioniq)
+        </button>
+      </div>
+
       <h1>내 차량 가격 예측</h1>
 
+      {/* 브랜드 선택 */}
       <div className="sell-field">
         <label>브랜드 선택</label>
-        <div
-          className="dropdown-header"
-          onClick={() => setBrandDropdownOpen(!brandDropdownOpen)}
-        >
+        <div className="dropdown-header" onClick={() => setBrandDropdownOpen(!brandDropdownOpen)}>
           {formData.brand ? (
             <>
               {brands.find((b) => b.brand === formData.brand)?.logo && (
@@ -133,15 +180,9 @@ function SellPage() {
 
         {brandDropdownOpen && (
           <div className="dropdown-options">
-            <div className="dropdown-option" onClick={() => handleBrandChange("")}>
-              브랜드 선택
-            </div>
+            <div className="dropdown-option" onClick={() => handleBrandChange("")}>브랜드 선택</div>
             {brands.map((brand, index) => (
-              <div
-                key={index}
-                className="dropdown-option"
-                onClick={() => handleBrandChange(brand.brand)}
-              >
+              <div key={index} className="dropdown-option" onClick={() => handleBrandChange(brand.brand)}>
                 {brand.logo && (
                   <img
                     src={`data:image/png;base64,${brand.logo}`}
@@ -156,6 +197,7 @@ function SellPage() {
         )}
       </div>
 
+      {/* 모델 선택 */}
       <div className="sell-field">
         <label>모델 선택</label>
         <select onChange={(e) => handleModelChange(e.target.value)} value={formData.model}>
@@ -166,6 +208,7 @@ function SellPage() {
         </select>
       </div>
 
+      {/* 연료 타입 */}
       <div className="sell-field">
         <label>연료 타입 선택</label>
         <select onChange={(e) => handleFuelTypeChange(e.target.value)} value={formData.fuelType}>
@@ -177,6 +220,7 @@ function SellPage() {
         </select>
       </div>
 
+      {/* 엔진 사이즈 */}
       {engineSizes.length > 0 && (
         <div className="sell-field">
           <label>엔진 사이즈 선택</label>
