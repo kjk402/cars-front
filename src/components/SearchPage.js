@@ -8,6 +8,10 @@ import "./SearchPage.css";
 
 // ... 상단 import 생략 ...
 function SearchPage() {
+  const api = axios.create({
+    baseURL: process.env.REACT_APP_API_BASE_URL,
+  });
+  
   const defaultFilters = {
     brand: "",
     model: "",
@@ -37,7 +41,7 @@ function SearchPage() {
   useEffect(() => {
     const fetchBrands = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/cars/top-brands/");
+        const response = await api.get("/cars/top-brands/");
         setBrands(response.data.top_brands);
       } catch (error) {
         console.error("브랜드 목록 불러오기 오류:", error);
@@ -53,7 +57,7 @@ function SearchPage() {
 
     if (newBrand) {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/cars/brand-models/", {
+        const response = await api.get("/cars/brand-models/", {
           params: { brand: newBrand },
         });
         setModels(response.data.models);
@@ -71,7 +75,7 @@ function SearchPage() {
         Object.entries(filters).filter(([_, value]) => value !== "")
       );
 
-      const response = await axios.get("http://127.0.0.1:8000/cars/filter-search/", {
+      const response = await api.get("/cars/filter-search/", {
         params: {
           ...activeFilters,
           page,

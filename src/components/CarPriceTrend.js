@@ -5,12 +5,15 @@ import "chart.js/auto";
 import "./CarPriceTrend.css";
 
 function CarPriceTrend({ onClose }) {
+  const api = axios.create({
+    baseURL: process.env.REACT_APP_API_BASE_URL,
+  });
   const [chartData, setChartData] = useState(null);
 
   useEffect(() => {
     const fetchDepreciationData = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/cars/depreciation/");
+        const response = await api.get("/cars/depreciation/");
         const depreciationData = response.data.depreciation;
 
         // 연도 오름차순 정렬
