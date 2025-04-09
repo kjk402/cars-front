@@ -12,35 +12,86 @@ function App() {
       <div className="app-container">
         {/* 네비게이션 바 */}
         <nav className="navbar">
-        <Link to="/" className="logo-link">
+          <Link to="/" className="logo-link">
             <img src="/logo192.png" alt="중고차 로고" className="logo-image" />
           </Link>
           <div className="nav-links">
             <Link to="/">홈</Link>
             <Link to="/sell">내 차 팔기</Link>
             <Link to="/search">내 차 사기</Link>
-            {/* <Link to="/history">이력 조회</Link>
-            <Link to="/review">차 리뷰</Link> */}
           </div>
         </nav>
 
-        {/* 라우팅 설정 */}
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/sell" element={<SellPage />} />  
-          <Route path="/search" element={<SearchPage />} />
-        </Routes>
+        <main className="main-content">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/sell" element={<SellPage />} />
+            <Route path="/search" element={<SearchPage />} />
+          </Routes>
+        </main>
+
+        {/* Footer */}
+        <footer className="footer">
+          <p>© 2025 KIM JOONKI</p>
+          <p>Contact: <a href="mailto:joonki402@gmail.com">joonki402@gmail.com</a></p>
+          <p>
+            Car data source:{" "}
+            <a
+              href="https://www.kaggle.com/datasets/adityadesai13/used-car-dataset-ford-and-mercedes/data"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              kaggle
+            </a>
+          </p>
+          <p>
+            GitHub:{" "}
+            <a
+              href="https://github.com/kjk402"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              kjk402
+            </a>
+          </p>
+          <p>
+            Individual repositories:{" "}
+            <a
+              href="https://github.com/kjk402/cars-front"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Frontend
+            </a>{" | "}
+            <a
+              href="https://github.com/kjk402/cars-server"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Server
+            </a>{" | "}
+            <a
+              href="https://github.com/kjk402/cars-ai"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              AI Model
+            </a>
+          </p>
+        </footer>
       </div>
     </Router>
   );
 }
+
+
 
 // ✅ 홈 페이지 컴포넌트
 function Home() {
   return (
     <div className="home-container">
       <h1>중고차 플랫폼</h1>
-      <p>중고차를 사고팔고, 이력을 조회하고 리뷰를 확인하세요.</p>
+      <p>내 차량 가격을 예측하고 다양한 중고차 매물을 둘러보세요.</p>
       <Link to="/sell" className="search-link" style={{ marginRight: '40px' }}> 내 차 팔기</Link>
       <Link to="/search" className="search-link"> 내 차 사기</Link>
     </div>

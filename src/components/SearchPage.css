@@ -1,6 +1,8 @@
 .search-container {
+  min-height: 80vh;
   text-align: center;
   padding: 20px;
+  margin-bottom: 80px; 
 }
 
 .search-bar {
@@ -67,6 +69,8 @@ ul li {
   flex-wrap: wrap;
   gap: 20px;
   justify-content: center;
+  min-height: 200px;    /* 👉 검색 결과 없을 때 높이 확보 */
+  margin-bottom: 60px;  /* 👉 푸터랑 여유 간격 */
 }
 
 .car-card {
