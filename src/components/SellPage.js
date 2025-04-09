@@ -140,10 +140,25 @@ function SellPage() {
           {serverStatus === "ok" ? "연결됨" : serverStatus === "fail" ? "연결 실패" : "확인 중..."}
         </span>
         <span
-          className={`status-indicator ${
-            serverStatus === "ok" ? "green" : serverStatus === "fail" ? "red" : "gray"
-          }`}
-        />
+        className={`status-indicator ${
+          serverStatus === "ok" ? "green" : serverStatus === "fail" ? "red" : "gray"
+        }`}
+      />
+        {serverStatus === "fail" && (
+          <span
+            className="server-warning"
+            onClick={() =>
+              alert(
+                "예측 서버는 평일 오전 9시부터 오후 7시까지 운영됩니다.\n" +
+                "서버가 꺼져있는 경우, 아래 샘플 버튼을 통해 결과를 미리 체험해보실 수 있습니다.\n" +
+                "이용에 불편을 드려 죄송합니다."
+              )
+            }
+            style={{ cursor: "pointer", fontSize: "16px", marginLeft: "10px", color: "#d00", fontWeight: "bold" }}
+          >
+            ⚠ NOTICE
+          </span>
+        )}
       </div>
 
       <div style={{ marginBottom: "10px", display: "flex", gap: "10px" }}>

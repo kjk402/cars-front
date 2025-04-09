@@ -158,3 +158,20 @@
     background-color: #eaeaea;
   }
   
+  .server-warning:hover {
+    text-decoration: underline;
+  }
+  
+  .server-warning {
+    animation: blink-always 1s linear infinite; 
+  }
+  
+  .server-warning:hover {
+    text-decoration: underline; 
+  }
+  
+  @keyframes blink-always {
+    50% {
+      opacity: 0.3; 
+    }
+  } 
