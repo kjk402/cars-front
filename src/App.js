@@ -33,7 +33,16 @@ function App() {
         {/* Footer */}
         <footer className="footer">
           <p>© 2025 KIM JOONKI</p>
-          <p>Contact: <a href="mailto:joonki402@gmail.com">joonki402@gmail.com</a></p>
+          <p>
+            Project Overview (Portfolio):{" "}
+            <a
+              href="https://glistening-lady-581.notion.site/Project-Overview-Portfolio-1d4ef3f83b45803fb876c7387e2588a5"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Notion
+            </a>
+          </p>
           <p>
             Car data source:{" "}
             <a
@@ -44,6 +53,7 @@ function App() {
               kaggle
             </a>
           </p>
+          <p>Contact: <a href="mailto:joonki402@gmail.com">joonki402@gmail.com</a></p>
           <p>
             GitHub:{" "}
             <a
