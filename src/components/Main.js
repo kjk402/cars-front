@@ -36,7 +36,7 @@ function Main() {
         </div>
       </div>
 
-      <h2 className="subtitle">헤이딜러로 잘 팔았어요.</h2>
+      <h2 className="subtitle">리뷰</h2>
       <div className="car-list">
         <img src="/images/car1.png" alt="car1" />
         <img src="/images/car2.png" alt="car2" />
